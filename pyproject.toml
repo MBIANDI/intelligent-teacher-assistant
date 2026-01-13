@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "teacher_assistant"
+version = "0.1.0"
+description = "This package is designed to assist teachers in managing students questions and providing relevant resources."
+authors = ["MBIA NDI Marie Thérèse <mbialaura12@gmail.com>"]
+readme = "README.md"
+packages = [{include = "teacher_assistant", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

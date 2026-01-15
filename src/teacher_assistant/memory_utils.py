@@ -44,10 +44,9 @@ def save_summary(sid: str, summary: str, user_data_dir: str):
 def build_memory(
     sid: str, llm: ChatOpenAI, user_data_dir: str
 ) -> ConversationSummaryBufferMemory:
-    # On initialise avec le résumé persistant (si présent)
     memory = ConversationSummaryBufferMemory(
         llm=llm,
-        max_token_limit=1200,  # ajuste selon contexte disponible du modèle
+        max_token_limit=1200,
         return_messages=True,
     )
     existing_summary = load_summary(sid, user_data_dir)

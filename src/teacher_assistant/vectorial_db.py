@@ -5,6 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +31,13 @@ def text_chunking(
     return chunks
 
 
+def openIAI_embedding_initialization(model_name: str) -> OpenAIEmbeddings:
+    embeddings = OpenAIEmbeddings(
+        model=model_name,
+    )
+    return embeddings
+
+
 def embedding_initialization(model_name: str) -> HuggingFaceEmbeddings:
     embeddings = HuggingFaceEmbeddings(
         model_name=model_name,
@@ -43,7 +51,10 @@ def create_vector_db(
     chunks: list, embeddings: HuggingFaceEmbeddings, db_path: str
 ) -> Chroma:
     db = Chroma.from_documents(
-        documents=chunks, embedding=embeddings, persist_directory=db_path
+        documents=chunks,
+        embedding=embeddings,
+        persist_directory=db_path,
+        collection_name="teacher_assistant_data",
     )
     return db
 
@@ -54,6 +65,7 @@ def vectorial_db_func(
     chunk_size: int = 1000,
     chunk_overlap: int = 200,
     db_path: str = "chroma_db",
+    USE_OPENAI_EMBEDDINGS: bool = False,
 ):
     # Check if data_path exist
     if not os.path.exists(data_path):
@@ -70,7 +82,11 @@ def vectorial_db_func(
     chunks = text_chunking(documents, chunk_size, chunk_overlap)
     logger.info(f"Created {len(chunks)} text chunks.")
     # Initialize embeddings
-    embeddings = embedding_initialization(model_name)
+    if USE_OPENAI_EMBEDDINGS:
+        embeddings = openIAI_embedding_initialization(model_name)
+        logger.info(f"Initialized OpenAI embeddings using model {model_name}.")
+    else:
+        embeddings = embedding_initialization(model_name)
     logger.info(f"Initialized embeddings using model {model_name}.")
     # Create vector database
     db = create_vector_db(chunks, embeddings, db_path)

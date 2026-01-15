@@ -10,7 +10,10 @@ from src.config import (
     DAT_DIR,
     DB_DIR,
     EMBEDDING_MODEL,
+    OPENAI_EMBEDDING_MODEL,
+    OPENAI_MODEL_NAME,
     TEMPERATURE,
+    USE_OPENAI_EMBEDDINGS,
 )
 from src.prompt_template import prompt_template
 from teacher_assistant.retriever import init_llm, prof_assistant
@@ -21,30 +24,31 @@ load_dotenv()
 # ---------------------------------------------------
 # LLM, Retriever, Vector DB
 # ---------------------------------------------------
-llm = init_llm(model_name="gpt-5-mini", temperature=TEMPERATURE)
-db = vectorial_db_func(
-    data_path=DAT_DIR,
-    model_name=EMBEDDING_MODEL,
-    chunk_size=CHUNK_SIZE,
-    chunk_overlap=CHUNK_OVERLAP,
-    db_path=DB_DIR,
-)
-
+llm = init_llm(model_name=OPENAI_MODEL_NAME, temperature=TEMPERATURE)
+if USE_OPENAI_EMBEDDINGS:
+    db = vectorial_db_func(
+        data_path=DAT_DIR,
+        model_name=OPENAI_EMBEDDING_MODEL,
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        db_path=DB_DIR,
+        USE_OPENAI_EMBEDDINGS=USE_OPENAI_EMBEDDINGS,
+    )
+else:
+    db = vectorial_db_func(
+        data_path=DAT_DIR,
+        model_name=EMBEDDING_MODEL,
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        db_path=DB_DIR,
+    )
 
 # ---------------------------------------------------
 # Streamlit UI
 # ---------------------------------------------------
-# st.set_page_config(page_title="Tuteur IA avec mémoire", page_icon="🧠", layout="wide")
 st.set_page_config(page_title="Cours NLP - ISSEA", page_icon="🎓", layout="wide")
 # st.title("🧠🎓 TutorAI : Posez vos questions sur le cours")
 
-
-# with st.sidebar:
-#     st.header("Paramètres")
-#     student_id = st.text_input("Identifiant élève (email ou alias)", value="eleve_001")
-#     st.caption("Assure-toi que l'identifiant reste le même pour retrouver la mémoire à chaque session.")
-
-#     st.markdown("---")
 
 with st.sidebar:
     # --- INFO ÉCOLE & PROF ---
@@ -113,8 +117,6 @@ if query := st.chat_input("Votre question..."):
         message_placeholder = st.empty()
         with st.spinner("Je consulte mes notes de cours..."):
             try:
-                # Appel à la chaîne LangChain
-                # Note: La mémoire est gérée automatiquement par l'objet 'memory' dans la chaine
                 response = assistant({"question": query}, {"chat_history": history})
                 full_response = response["answer"]
 

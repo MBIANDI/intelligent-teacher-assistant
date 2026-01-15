@@ -3,9 +3,8 @@ import os
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -54,7 +53,7 @@ def create_vector_db(
         documents=chunks,
         embedding=embeddings,
         persist_directory=db_path,
-        collection_name="teacher_assistant_data",
+        # collection_name="teacher_assistant_data",
     )
     return db
 

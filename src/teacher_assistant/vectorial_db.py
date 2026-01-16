@@ -47,7 +47,7 @@ def embedding_initialization(model_name: str) -> HuggingFaceEmbeddings:
 
 
 def create_vector_db(
-    chunks: list, embeddings: HuggingFaceEmbeddings, db_path: str
+    chunks: list, embeddings, db_path: str
 ) -> Chroma:
     db = Chroma.from_documents(
         documents=chunks,

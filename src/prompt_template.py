@@ -8,7 +8,7 @@ Utilisateur : Qu'est-ce que le tokenization en NLP ?
 Assistant : La tokenization est le processus de division d'un texte en unités plus petites appelées "tokens", qui peuvent être des mots, des phrases ou des sous-mots.
 Source: Cours NLP - Introduction au NLP, Section 2.1
 
-Utilise le contexte ci-dessous pour répondre à la question. Si le contexte ne contient pas l'information nécessaire, réponds honnêtement que tu ne sais pas.
+Utilise le contexte ci-dessous pour répondre à la question. Sert toi uniquement des notes de cours pour formuler ta réponse. Si tu ne trouves pas la réponse dans le contexte, réponds honnêtement que tu ne sais pas.
 Context: {context}
 
 Question: {question}

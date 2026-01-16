@@ -81,18 +81,10 @@ cd intelligent-teacher-assistant
 
 # Installer les dépendances
 poetry install
+poetry build
+poetry shell
 ```
 
-### Avec pip
-
-```bash
-# Créer un environnement virtuel
-python -m venv venv
-source venv/bin/activate  # Sur Windows: venv\Scripts\activate
-
-# Installer les dépendances
-pip install -r requirements.txt
-```
 
 ## ⚙️ Configuration
 

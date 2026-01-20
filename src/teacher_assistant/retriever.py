@@ -37,15 +37,17 @@ def retriever(llm: ChatOpenAI, prompt: str, vector_db, k: int = 4):
 def prof_assistant(
     llm: ChatOpenAI,
     prompt: str,
-    vector_db,
+    retriever,
 ) -> ConversationalRetrievalChain:
     admin_prompt = PromptTemplate(
         template=prompt, input_variables=["context", "question"]
     )
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    
+        
     prof_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
-        retriever=vector_db.as_retriever(),
+        retriever=retriever,
         memory=memory,
         combine_docs_chain_kwargs={"prompt": admin_prompt},
         get_chat_history=lambda h: h,

@@ -211,3 +211,4 @@ data/
 chroma_db/
 **png
 **ipynb
+parent_store/

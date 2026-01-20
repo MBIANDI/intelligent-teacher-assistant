@@ -14,10 +14,13 @@ from src.config import (
     OPENAI_MODEL_NAME,
     TEMPERATURE,
     USE_OPENAI_EMBEDDINGS,
+    RETRIEVER_TYPE,
+    PARENT_CHUNK_SIZE,
+    CHILD_CHUNK_SIZE
 )
 from src.prompt_template import prompt_template
 from teacher_assistant.retriever import init_llm, prof_assistant
-from teacher_assistant.vectorial_db import vectorial_db_func
+from teacher_assistant.vectorial_db import init_retriever
 
 load_dotenv()
 
@@ -25,23 +28,17 @@ load_dotenv()
 # LLM, Retriever, Vector DB
 # ---------------------------------------------------
 llm = init_llm(model_name=OPENAI_MODEL_NAME, temperature=TEMPERATURE)
-if USE_OPENAI_EMBEDDINGS:
-    db = vectorial_db_func(
-        data_path=DAT_DIR,
-        model_name=OPENAI_EMBEDDING_MODEL,
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        db_path=DB_DIR,
-        USE_OPENAI_EMBEDDINGS=USE_OPENAI_EMBEDDINGS,
-    )
-else:
-    db = vectorial_db_func(
-        data_path=DAT_DIR,
-        model_name=EMBEDDING_MODEL,
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        db_path=DB_DIR,
-    )
+retriever = init_retriever(
+    data_path=DAT_DIR,
+    model_name=(
+        OPENAI_EMBEDDING_MODEL if USE_OPENAI_EMBEDDINGS else EMBEDDING_MODEL
+    ),
+    chunk_size=CHUNK_SIZE,
+    chunk_overlap=CHUNK_OVERLAP,
+    db_path=DB_DIR,
+    USE_OPENAI_EMBEDDINGS=USE_OPENAI_EMBEDDINGS,
+    retriever_type=RETRIEVER_TYPE,
+)
 
 # ---------------------------------------------------
 # Streamlit UI
@@ -89,7 +86,7 @@ st.markdown(
 assistant = prof_assistant(
     llm=llm,
     prompt=prompt_template,
-    vector_db=db,
+    retriever=retriever,
 )
 history = []
 # Initialiser l'historique des messages dans l'interface Streamlit
